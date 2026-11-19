@@ -54,6 +54,12 @@ describe('.parseReviews', () => {
 
       expect(parseReviews(widgetWith(card)).reviews[0].author).toBe('JT deVries')
     })
+
+    it('is expected to leave its lowercase words lowercase', () => {
+      const card = CARDS[0].replace('Morgan Example', 'Ana Sample da Costa')
+
+      expect(parseReviews(widgetWith(card)).reviews[0].author).toBe('Ana Sample da Costa')
+    })
   })
 
   describe('with a duplicated name', () => {

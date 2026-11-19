@@ -71,20 +71,14 @@ function cleanName(name) {
 
 /**
  * Reviewers set their own display name on Google, so they arrive as "alex example" as often as
- * "Alex Example". A word carrying a capital anywhere is left exactly as written, so initials and
- * business names keep their own styling ("JT deVries", "Example & Co Ltd").
+ * "Alex Example". Only a name typed entirely in lowercase is capitalised: a capital anywhere means
+ * the reviewer styled it, so it is left exactly as written, keeping particles, initials and business
+ * names as they are ("Ana Sample da Costa", "JT deVries", "Example & Co Ltd").
  */
 function capitalizeName(name) {
-  if (!name) return name
+  if (!name || /\p{Lu}/u.test(name)) return name
 
-  return name
-    .split(/(\s+)/)
-    .map((word) => {
-      if (/\p{Lu}/u.test(word)) return word
-
-      return word.replace(/(^|[-'’])(\p{Ll})/gu, (_, boundary, letter) => `${boundary}${letter.toUpperCase()}`)
-    })
-    .join('')
+  return name.replace(/(^|[\s\-'’])(\p{Ll})/gu, (_, boundary, letter) => `${boundary}${letter.toUpperCase()}`)
 }
 
 /**

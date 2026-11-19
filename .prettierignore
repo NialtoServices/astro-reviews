@@ -1,3 +1,7 @@
 node_modules/
 pnpm-lock.yaml
 .superpowers/
+
+# Widget markup as Trustindex serves it. The parser must be tested against that exact shape, so the
+# formatter never touches it.
+tests/fixtures/

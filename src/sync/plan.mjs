@@ -35,8 +35,15 @@ function plural(count, noun) {
 }
 
 /** Why the planned changes should not be written, one message per tripped check, or none when they may. */
-export function safetyRefusals({ droppedCount, removedCount, storedCount, parsedCount }) {
+export function safetyRefusals({ blockCount, droppedCount, removedCount, storedCount, parsedCount }) {
   const refusals = []
+
+  if (blockCount === 0) {
+    refusals.push(
+      'The widget carries no review cards, so its markup has most likely changed. Run with --force to write ' +
+        'it with no reviews.'
+    )
+  }
 
   if (droppedCount > 0) {
     refusals.push(

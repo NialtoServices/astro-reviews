@@ -46,7 +46,7 @@ export async function runSync({
     return 1
   }
 
-  const { reviews, dropped } = parseReviews(widgetHtml)
+  const { reviews, dropped, blockCount } = parseReviews(widgetHtml)
   const storedReviews = stored?.reviews ?? []
   const { added, updated, removed } = planChanges(storedReviews, reviews)
   const changeLine = `${added.length} added, ${updated.length} updated, ${removed.length} removed`
@@ -55,6 +55,7 @@ export async function runSync({
     error(`Could not read review block ${drop.id ? `"${drop.id}"` : 'with no id'}: ${drop.reason}`)
 
   const refusals = safetyRefusals({
+    blockCount,
     droppedCount: dropped.length,
     removedCount: removed.length,
     storedCount: storedReviews.length,

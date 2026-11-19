@@ -44,12 +44,20 @@ describe('.planChanges', () => {
 
 describe('.safetyRefusals', () => {
   it('is expected to allow a clean run', () => {
-    expect(safetyRefusals({ droppedCount: 0, removedCount: 5, storedCount: 10, parsedCount: 8 })).toEqual([])
+    expect(
+      safetyRefusals({ blockCount: 10, droppedCount: 0, removedCount: 5, storedCount: 10, parsedCount: 8 })
+    ).toEqual([])
   })
 
   describe('with a dropped block', () => {
     it('is expected to refuse, saying how many', () => {
-      const refusals = safetyRefusals({ droppedCount: 1, removedCount: 0, storedCount: 10, parsedCount: 10 })
+      const refusals = safetyRefusals({
+        blockCount: 10,
+        droppedCount: 1,
+        removedCount: 0,
+        storedCount: 10,
+        parsedCount: 10
+      })
 
       expect(refusals).toEqual([expect.stringMatching(/1 review block.*could not be read/)])
     })
@@ -57,7 +65,13 @@ describe('.safetyRefusals', () => {
 
   describe('with more than five removals', () => {
     it('is expected to refuse, saying how many', () => {
-      const refusals = safetyRefusals({ droppedCount: 0, removedCount: 6, storedCount: 30, parsedCount: 30 })
+      const refusals = safetyRefusals({
+        blockCount: 10,
+        droppedCount: 0,
+        removedCount: 6,
+        storedCount: 30,
+        parsedCount: 30
+      })
 
       expect(refusals).toEqual([expect.stringMatching(/remove 6 reviews/)])
     })
@@ -65,21 +79,49 @@ describe('.safetyRefusals', () => {
 
   describe('with a parse below 80% of the stored count', () => {
     it('is expected to refuse, naming both counts', () => {
-      const refusals = safetyRefusals({ droppedCount: 0, removedCount: 0, storedCount: 32, parsedCount: 24 })
+      const refusals = safetyRefusals({
+        blockCount: 10,
+        droppedCount: 0,
+        removedCount: 0,
+        storedCount: 32,
+        parsedCount: 24
+      })
 
       expect(refusals).toEqual([expect.stringMatching(/24 reviews.*32/)])
     })
   })
 
+  describe('with no review cards in the widget', () => {
+    it('is expected to refuse', () => {
+      const refusals = safetyRefusals({
+        blockCount: 0,
+        droppedCount: 0,
+        removedCount: 0,
+        storedCount: 0,
+        parsedCount: 0
+      })
+
+      expect(refusals).toEqual([expect.stringMatching(/no review cards/)])
+    })
+  })
+
   describe('with nothing stored yet', () => {
     it('is expected to skip the count check', () => {
-      expect(safetyRefusals({ droppedCount: 0, removedCount: 0, storedCount: 0, parsedCount: 3 })).toEqual([])
+      expect(
+        safetyRefusals({ blockCount: 10, droppedCount: 0, removedCount: 0, storedCount: 0, parsedCount: 3 })
+      ).toEqual([])
     })
   })
 
   describe('with every check tripped', () => {
     it('is expected to report all three, each pointing at --force', () => {
-      const refusals = safetyRefusals({ droppedCount: 2, removedCount: 9, storedCount: 40, parsedCount: 20 })
+      const refusals = safetyRefusals({
+        blockCount: 10,
+        droppedCount: 2,
+        removedCount: 9,
+        storedCount: 40,
+        parsedCount: 20
+      })
 
       expect(refusals).toHaveLength(3)
       expect(refusals.every((refusal) => refusal.includes('--force'))).toBe(true)

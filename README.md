@@ -100,7 +100,7 @@ Each entry in `reviews` is one review:
 | Field      | Notes                                                                                      |
 | ---------- | ------------------------------------------------------------------------------------------ |
 | `author`   | Absent on an anonymous review: some platforms publish reviews without a name.              |
-| `rating`   | Out of five, and may be fractional: ratings on other scales are restated out of five.      |
+| `rating`   | Out of five, and may be fractional: ratings on other scales are restated out of five, so 1/10 is 0.5. |
 | `source`   | The platform, as Trustindex names it: `Google`, `Checkatrade`, `Yell` and so on.           |
 | `date`     | `YYYY-MM-DD`, when Trustindex gives one.                                                   |
 | `text`     | The review's prose, with its line breaks.                                                  |
@@ -156,7 +156,8 @@ A run:
 Each of these refuses the run, writes nothing and exits 1, because each looks like a widget that has stopped
 carrying every review rather than reviews that have really gone:
 
-- **A review block could not be read**, which usually means Trustindex has changed its markup.
+- **The widget carries no review cards at all**, or **a review block could not be read**, which usually means
+  Trustindex has changed its markup.
 - **More than 5 reviews would be removed** in one run. A withdrawal is one or two at a time; more usually means
   the widget's review limit or filters have changed.
 - **Fewer than 80% of the stored reviews came back.**

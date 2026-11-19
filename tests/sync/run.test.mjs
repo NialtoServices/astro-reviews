@@ -2,6 +2,7 @@ import { readFileSync } from 'node:fs'
 import { mkdir, readFile, writeFile } from 'node:fs/promises'
 import { join } from 'node:path'
 import { describe, expect, it } from 'vitest'
+import { ReviewSchema } from '../../src/schemas.mjs'
 import { runSync } from '../../src/sync/run.mjs'
 import { makeSiteDirectory } from '../support/site-directory.mjs'
 
@@ -58,7 +59,30 @@ async function readStored(reviewsPath) {
 
 const withDroppedBlock = WIDGET_HTML.replace(/ data-id="a1b2c3d4e5f60718293a4b5c6d7e8f90"/, '')
 
+const withoutCards = WIDGET_HTML.slice(0, WIDGET_HTML.indexOf('<div class="ti-review-item')) + '</div>\n'
+
 describe('.runSync', () => {
+  describe('with the lowest rating on a ten-point scale', () => {
+    it('is expected to write a review the loader schema accepts', async () => {
+      const { siteDirectory, reviewsPath } = await makeSite()
+      await sync(siteDirectory, { html: WIDGET_HTML.replace('data-rating="10.0"', 'data-rating="1.0"') })
+      const { reviews } = await readStored(reviewsPath)
+
+      expect(reviews.every((review) => ReviewSchema.safeParse(review).success)).toBe(true)
+    })
+  })
+
+  describe('with no review cards in the widget', () => {
+    it('is expected to refuse, write nothing and exit 1', async () => {
+      const { siteDirectory, reviewsPath } = await makeSite()
+      const { code, output } = await sync(siteDirectory, { html: withoutCards })
+
+      expect(code).toBe(1)
+      expect(output).toMatch(/no review cards/)
+      await expect(readFile(reviewsPath, 'utf-8')).rejects.toThrow(/ENOENT/)
+    })
+  })
+
   describe('with nothing stored yet', () => {
     it('is expected to write every review and the totals, and exit 0', async () => {
       const { siteDirectory, reviewsPath } = await makeSite()

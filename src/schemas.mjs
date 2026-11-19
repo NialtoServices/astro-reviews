@@ -5,8 +5,11 @@ export const ReviewSchema = z.object({
   /** Absent on an anonymous review: some platforms publish reviews without a name. */
   author: z.string().optional(),
 
-  /** Out of five, and may be fractional: ratings on other scales are restated out of five. */
-  rating: z.number().min(1).max(5),
+  /**
+   * Out of five, and may be fractional: ratings on other scales are restated out of five, so the lowest
+   * score on a ten-point platform is 0.5.
+   */
+  rating: z.number().positive().max(5),
 
   /** The platform the review was posted on, as Trustindex names it (Google, Checkatrade, Yell). */
   source: z.string(),

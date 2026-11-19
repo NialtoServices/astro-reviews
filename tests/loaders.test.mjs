@@ -117,6 +117,10 @@ describe('ReviewSchema', () => {
     expect(ReviewSchema.safeParse({ ...STORED.reviews[0], featured: 1 }).success).toBe(true)
   })
 
+  it('is expected to accept the lowest rating on a ten-point scale, restated out of five', () => {
+    expect(ReviewSchema.safeParse({ ...STORED.reviews[0], rating: 0.5 }).success).toBe(true)
+  })
+
   it('is expected to reject a rating above 5', () => {
     expect(ReviewSchema.safeParse({ ...STORED.reviews[0], rating: 6 }).success).toBe(false)
   })

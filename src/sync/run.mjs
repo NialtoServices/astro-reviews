@@ -71,7 +71,7 @@ export async function runSync({
 
   const fetched = now().toISOString().slice(0, 10)
   await writeReviewsFile(reviewsDirectory, { fetched, summary, reviews })
-  log(`Reviews: ${changeLine}. Rated ${summary.rating} from ${summary.count} reviews.`)
+  log(`Reviews: ${changeLine}. Rated ${summary.rating} from ${summary.count} review(s).`)
   for (const review of removed) log(`  removed ${describeReview(review)}`)
 
   const withdrawnFeatured = missingFeatured(featuredIds, reviews)

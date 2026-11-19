@@ -95,6 +95,13 @@ describe('.runSync', () => {
       expect(stored.fetched).toBe('2026-11-19')
     })
 
+    it('is expected to report the totals', async () => {
+      const { siteDirectory } = await makeSite()
+      const { output } = await sync(siteDirectory)
+
+      expect(output).toMatch(/Rated 4\.9 from 1234 review\(s\)/)
+    })
+
     it('is expected to fetch the widget named in package.json', async () => {
       const { siteDirectory } = await makeSite()
       const calls = []

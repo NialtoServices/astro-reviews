@@ -20,25 +20,21 @@ It needs Astro 7 (7.4 or later) and Node 22.12 or later.
 ## Widget requirements
 
 Trustindex has no review API. The sync reads the same document the widget's embed loads, so **the widget must
-be set up in a way the sync can read**. These are hard requirements: a widget that misses one fails the sync
-with a message naming what is missing.
+be set up in a way the sync can read**. These are hard requirements. A widget that misses the first or second
+fails the sync with a message naming what is missing; one that misses the third trips the sync's safety checks.
 
-1. **The layout must have an "All reviews" header showing the rating and the review count**, totalled across
-   every platform the widget collects. The sync takes the site's headline figures from that header and from
-   nowhere else. In the widget's markup this is layout 79.
+1. **Use a Grid widget with a header.** Trustindex offers several widgets called "Grid"; choose one that shows
+   a header above the reviews. The sync takes the site's headline rating and count from that header's "All
+   reviews" figures, totalled across every platform the widget collects, and from nowhere else. (In the
+   widget's markup this is layout 79.)
 
-   <!-- TODO(owner): name the layout as the Trustindex dashboard shows it, and where to choose it. -->
+2. **Turn on the header's review count.** In the widget's settings pane, open the **Header** group and switch
+   **Rating** on. Without it the header shows the rating but not the total count.
 
-2. **The header must show the review count**, not only the rating. Some widgets on the right layout still hide
-   it.
-
-   <!-- TODO(owner): name the setting that shows the count in the header. -->
-
-3. **The widget's review limit must be high enough to carry every review.** The sync can only store what the
-   widget carries. A widget capped below the number of reviews makes the older ones look withdrawn, and the
-   sync's safety checks then refuse the run. Raise the limit whenever the review count approaches it.
-
-   <!-- TODO(owner): name the review limit setting. -->
+3. **Include every review.** In the widget's settings pane, open the **Review Filter** group and set **Number
+   of reviews** above the business's review count. The sync can only store what the widget carries, so a
+   widget capped below the number of reviews makes the older ones look withdrawn and the safety checks refuse
+   the run. Raise the number whenever the review count approaches it.
 
 The figures in the header count every rating, with or without text, while the widget only carries reviews that
 have text. So the headline count is usually larger than the number of reviews a site shows, and that is

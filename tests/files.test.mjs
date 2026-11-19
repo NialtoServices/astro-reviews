@@ -72,8 +72,15 @@ describe('.writeReviewsFile', () => {
 })
 
 describe('.sortReviews', () => {
-  it('is expected to put the newest first, undated last, and same-day reviews in id order', () => {
-    expect(sortReviews([UNDATED, OLDER, NEWER, SAME_DAY]).map((review) => review.id)).toEqual(['aa', 'b', 'a', 'c'])
+  it('is expected to put the newest first and undated last', () => {
+    expect(sortReviews([UNDATED, OLDER, NEWER]).map((review) => review.id)).toEqual(['b', 'a', 'c'])
+  })
+
+  describe('with reviews from the same day', () => {
+    it("is expected to keep them in the order given, which is the widget's newest-first order", () => {
+      expect(sortReviews([OLDER, NEWER, SAME_DAY]).map((review) => review.id)).toEqual(['b', 'aa', 'a'])
+      expect(sortReviews([OLDER, SAME_DAY, NEWER]).map((review) => review.id)).toEqual(['aa', 'b', 'a'])
+    })
   })
 })
 

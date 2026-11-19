@@ -82,11 +82,12 @@ export function missingFeatured(featuredIds, reviews) {
   return featuredIds.filter((id) => !reviewIds.has(id))
 }
 
-/** Newest first, undated last, and reviews from the same day in id order, so a sync's diff is stable. */
+/**
+ * Newest first and undated last. Reviews from the same day keep the order they are given in, which
+ * for a sync is the widget's own order: newest first by exact time, finer than the stored date.
+ */
 export function sortReviews(reviews) {
-  return [...reviews].sort(
-    (first, second) => (second.date ?? '').localeCompare(first.date ?? '') || first.id.localeCompare(second.id)
-  )
+  return [...reviews].sort((first, second) => (second.date ?? '').localeCompare(first.date ?? ''))
 }
 
 /** One review with its keys in a fixed order, leaving out the optional ones it does not have. */

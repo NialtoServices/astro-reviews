@@ -27,12 +27,12 @@ export async function runSync({
 }) {
   const reviewsDirectory = join(siteDirectory, DEFAULT_DIRECTORY)
 
-  let widgetHtml, featuredIds, stored
+  let widgetHTML, featuredIds, stored
   try {
     const { widgetId } = await readConfig(siteDirectory)
     featuredIds = await readFeatured(reviewsDirectory)
     stored = await readReviewsFile(reviewsDirectory)
-    widgetHtml = await fetchWidget(widgetContentURL(widgetId), { fetch, warn: error })
+    widgetHTML = await fetchWidget(widgetContentURL(widgetId), { fetch, warn: error })
   } catch (failure) {
     error(failure.message)
     return 1
@@ -40,13 +40,13 @@ export async function runSync({
 
   let summary
   try {
-    summary = parseSummary(widgetHtml)
+    summary = parseSummary(widgetHTML)
   } catch (failure) {
     error(failure.message)
     return 1
   }
 
-  const { reviews, dropped, blockCount } = parseReviews(widgetHtml)
+  const { reviews, dropped, blockCount } = parseReviews(widgetHTML)
   const storedReviews = stored?.reviews ?? []
   const { added, updated, removed } = planChanges(storedReviews, reviews)
   const changeLine = `${added.length} added, ${updated.length} updated, ${removed.length} removed`

@@ -54,11 +54,19 @@ describe('.parseReviews', () => {
 
       expect(parseReviews(widgetWith(card)).reviews[0].author).toBe('JT deVries')
     })
+  })
 
-    it('is expected to leave its lowercase words lowercase', () => {
-      const card = CARDS[0].replace('Morgan Example', 'Ana Sample da Costa')
+  describe.each([
+    ['a particle among capitalised words', 'Ana Sample da Costa', 'Ana Sample da Costa'],
+    ['a particle in an all-lowercase name', 'ana sample da costa', 'Ana Sample da Costa'],
+    ['a particle as the first word', 'de sample', 'De Sample'],
+    ['lowercase words beside capitalised ones', 'Sam taylor jones', 'Sam Taylor Jones'],
+    ['a lowercase initial', 'Jo e', 'Jo E']
+  ])('with %s', (_, typed, shown) => {
+    it(`is expected to show "${typed}" as "${shown}"`, () => {
+      const card = CARDS[0].replace('Morgan Example', typed)
 
-      expect(parseReviews(widgetWith(card)).reviews[0].author).toBe('Ana Sample da Costa')
+      expect(parseReviews(widgetWith(card)).reviews[0].author).toBe(shown)
     })
   })
 

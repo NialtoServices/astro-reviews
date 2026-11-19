@@ -70,15 +70,46 @@ function cleanName(name) {
 }
 
 /**
- * Reviewers set their own display name on Google, so they arrive as "alex example" as often as
- * "Alex Example". Only a name typed entirely in lowercase is capitalised: a capital anywhere means
- * the reviewer styled it, so it is left exactly as written, keeping particles, initials and business
- * names as they are ("Ana Sample da Costa", "JT deVries", "Example & Co Ltd").
+ * Surname particles that stay lowercase after the first word of a name ("Ana Sample da Costa"). A
+ * reviewer whose particle is capitalised ("De Silva") keeps it, because a word carrying a capital is
+ * never changed.
+ */
+const NAME_PARTICLES = new Set([
+  'da',
+  'das',
+  'de',
+  'del',
+  'della',
+  'den',
+  'der',
+  'di',
+  'do',
+  'dos',
+  'du',
+  'la',
+  'le',
+  'van',
+  'von'
+])
+
+/**
+ * Reviewers set their own display name on Google, so names arrive as "alex example" or "Sam taylor"
+ * as often as "Alex Example". Each word typed entirely in lowercase is capitalised, except a surname
+ * particle after the first word. A word carrying a capital anywhere is left exactly as written, so
+ * initials and business names keep their own styling ("JT deVries", "Example & Co Ltd").
  */
 function capitalizeName(name) {
-  if (!name || /\p{Lu}/u.test(name)) return name
+  if (!name) return name
 
-  return name.replace(/(^|[\s\-'’])(\p{Ll})/gu, (_, boundary, letter) => `${boundary}${letter.toUpperCase()}`)
+  return name
+    .split(/(\s+)/)
+    .map((word, index) => {
+      if (/\p{Lu}/u.test(word)) return word
+      if (index > 0 && NAME_PARTICLES.has(word)) return word
+
+      return word.replace(/(^|[-'’])(\p{Ll})/gu, (_, boundary, letter) => `${boundary}${letter.toUpperCase()}`)
+    })
+    .join('')
 }
 
 /**

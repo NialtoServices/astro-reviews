@@ -15,7 +15,7 @@ build itself never contacts Trustindex.
 pnpm add @nialto-services/astro-reviews
 ```
 
-It needs Astro 7.4 or later and Node 22.12 or later.
+It needs Astro 7 (7.4 or later) and Node 22.12 or later.
 
 ## Widget requirements
 
@@ -82,10 +82,11 @@ expected.
    export const collections = { reviews, reviewSummary }
    ```
 
-   The loaders bring their own schemas, so entries are fully typed.
+   The loaders bring their own schemas, so entries are fully typed. The schemas are exported too, as
+   `ReviewSchema` and `ReviewSummarySchema`, with the `Review` and `ReviewSummary` types beside them.
 
 5. **Choose the featured reviews**, if the site leads with some, in `src/content/reviews/featured.json`: a list
-   of review ids in the order to show them. The ids are the keys of the entries in `reviews.json`.
+   of review ids in the order to show them. Each review's id is its `id` field in `reviews.json`.
 
    ```json
    ["9f8e7d6c5b4a39281706f5e4d3c2b1a0", "0a1b2c3d4e5f60718293a4b5c6d7e8f9"]
@@ -97,14 +98,14 @@ expected.
 
 Each entry in `reviews` is one review:
 
-| Field      | Notes                                                                                      |
-| ---------- | ------------------------------------------------------------------------------------------ |
-| `author`   | Absent on an anonymous review: some platforms publish reviews without a name.              |
+| Field      | Notes                                                                                                 |
+| ---------- | ----------------------------------------------------------------------------------------------------- |
+| `author`   | Absent on an anonymous review: some platforms publish reviews without a name.                         |
 | `rating`   | Out of five, and may be fractional: ratings on other scales are restated out of five, so 1/10 is 0.5. |
-| `source`   | The platform, as Trustindex names it: `Google`, `Checkatrade`, `Yell` and so on.           |
-| `date`     | `YYYY-MM-DD`, when Trustindex gives one.                                                   |
-| `text`     | The review's prose, with its line breaks.                                                  |
-| `featured` | The review's 1-based position in `featured.json`; absent on a review that is not featured. |
+| `source`   | The platform, as Trustindex names it: `Google`, `Checkatrade`, `Yell` and so on.                      |
+| `date`     | `YYYY-MM-DD`, when Trustindex gives one.                                                              |
+| `text`     | The review's prose, with its line breaks.                                                             |
+| `featured` | The review's 1-based position in `featured.json`; absent on a review that is not featured.            |
 
 **Render `text` only as text.** Members of the public wrote it. Passed to `set:html` or a Markdown renderer, a
 link or raw element in it would render on the site.
@@ -142,7 +143,7 @@ sync rewrites that file whole on every run and never touches `featured.json`.
 
 A run:
 
-1. reads the widget id and `featured.json`, and fails at once if either is missing or malformed;
+1. reads the widget id and `featured.json`, and fails at once if the id is missing or either is malformed;
 2. fetches the widget, with a cache-busting parameter, because Trustindex's CDN otherwise serves a copy up to
    half a day old;
 3. reads the headline figures, failing if the widget does not meet the [requirements](#widget-requirements);

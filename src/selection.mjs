@@ -3,9 +3,16 @@
  * `data.date` and `data.featured`, and are free of `astro:content` so they run anywhere.
  */
 
-/** Newest first; a review with no date sorts last. */
+/**
+ * Newest first; a review with no date sorts last, and reviews from the same day keep their synced
+ * `order`, which is the widget's own newest-first order.
+ */
 export function sortNewestFirst(reviews) {
-  return [...reviews].sort((first, second) => (second.data.date ?? '').localeCompare(first.data.date ?? ''))
+  return [...reviews].sort(
+    (first, second) =>
+      (second.data.date ?? '').localeCompare(first.data.date ?? '') ||
+      (first.data.order ?? 0) - (second.data.order ?? 0)
+  )
 }
 
 /**

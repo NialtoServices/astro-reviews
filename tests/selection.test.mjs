@@ -2,8 +2,11 @@ import { describe, expect, it } from 'vitest'
 import { formatReviewDate, selectFeaturedReviews, sortNewestFirst } from '../src/selection.mjs'
 
 /** A stand-in for a collection entry: selection reads only `id` and these `data` fields. */
-function review(id, date, featured) {
-  return { id, data: { ...(date ? { date } : {}), ...(featured ? { featured } : {}) } }
+function review(id, date, featured, order) {
+  return {
+    id,
+    data: { ...(date ? { date } : {}), ...(featured ? { featured } : {}), ...(order === undefined ? {} : { order }) }
+  }
 }
 
 const ids = (reviews) => reviews.map((entry) => entry.id)
@@ -15,6 +18,14 @@ describe('.sortNewestFirst', () => {
       'a',
       'b'
     ])
+  })
+
+  describe('with reviews from the same day', () => {
+    it('is expected to order them by their synced order, whatever order they arrive in', () => {
+      const reviews = [review('later-id', '2026-01-01', undefined, 1), review('earlier-id', '2026-01-01', undefined, 0)]
+
+      expect(ids(sortNewestFirst(reviews))).toEqual(['earlier-id', 'later-id'])
+    })
   })
 
   it('is expected to leave the given list as it was', () => {

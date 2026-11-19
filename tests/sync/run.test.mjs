@@ -68,7 +68,7 @@ describe('.runSync', () => {
       await sync(siteDirectory, { html: WIDGET_HTML.replace('data-rating="10.0"', 'data-rating="1.0"') })
       const { reviews } = await readStored(reviewsPath)
 
-      expect(reviews.every((review) => ReviewSchema.safeParse(review).success)).toBe(true)
+      expect(reviews.every((review, order) => ReviewSchema.safeParse({ ...review, order }).success)).toBe(true)
     })
   })
 

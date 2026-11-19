@@ -54,10 +54,10 @@ async function loadReviews(context) {
   if (!file) context.logger.info('No reviews.json yet: run `astro-reviews sync` to fetch the reviews.')
 
   context.store.clear()
-  for (const review of reviews) {
+  for (const [order, review] of reviews.entries()) {
     const position = featuredIds.indexOf(review.id)
     const { id, ...fields } = review
-    const data = position === -1 ? fields : { ...fields, featured: position + 1 }
+    const data = position === -1 ? { ...fields, order } : { ...fields, order, featured: position + 1 }
 
     context.store.set({ id, data: await context.parseData({ id, data }), digest: context.generateDigest(data) })
   }

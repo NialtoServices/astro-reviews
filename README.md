@@ -94,14 +94,15 @@ expected.
 
 Each entry in `reviews` is one review:
 
-| Field      | Notes                                                                                                 |
-| ---------- | ----------------------------------------------------------------------------------------------------- |
-| `author`   | Absent on an anonymous review: some platforms publish reviews without a name.                         |
-| `rating`   | Out of five, and may be fractional: ratings on other scales are restated out of five, so 1/10 is 0.5. |
-| `source`   | The platform, as Trustindex names it: `Google`, `Checkatrade`, `Yell` and so on.                      |
-| `date`     | `YYYY-MM-DD`, when Trustindex gives one.                                                              |
-| `text`     | The review's prose, with its line breaks.                                                             |
-| `featured` | The review's 1-based position in `featured.json`; absent on a review that is not featured.            |
+| Field      | Notes                                                                                                           |
+| ---------- | --------------------------------------------------------------------------------------------------------------- |
+| `author`   | Absent on an anonymous review: some platforms publish reviews without a name.                                   |
+| `rating`   | Out of five, and may be fractional: ratings on other scales are restated out of five, so 1/10 is 0.5.           |
+| `source`   | The platform, as Trustindex names it: `Google`, `Checkatrade`, `Yell` and so on.                                |
+| `date`     | `YYYY-MM-DD`, when Trustindex gives one.                                                                        |
+| `text`     | The review's prose, with its line breaks.                                                                       |
+| `order`    | Its 0-based place in `reviews.json`, newest first; `sortNewestFirst` uses it to keep same-day reviews in order. |
+| `featured` | The review's 1-based position in `featured.json`; absent on a review that is not featured.                      |
 
 **Render `text` only as text.** Members of the public wrote it. Passed to `set:html` or a Markdown renderer, a
 link or raw element in it would render on the site.

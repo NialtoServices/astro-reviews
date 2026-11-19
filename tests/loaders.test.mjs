@@ -64,7 +64,14 @@ describe('.reviewsLoader', () => {
     const { entries, context } = await makeContext({ 'reviews.json': STORED })
     await reviewsLoader().load(context)
 
-    expect(entries.get('b').data).toEqual({ rating: 4.5, source: 'Checkatrade', text: 'Second.' })
+    expect(entries.get('b').data).toEqual({ rating: 4.5, source: 'Checkatrade', text: 'Second.', order: 1 })
+  })
+
+  it('is expected to number every review by its place in reviews.json, newest first', async () => {
+    const { entries, context } = await makeContext({ 'reviews.json': STORED })
+    await reviewsLoader().load(context)
+
+    expect(['a', 'b', 'c'].map((id) => entries.get(id).data.order)).toEqual([0, 1, 2])
   })
 
   describe('with a featured id that has no review', () => {
@@ -114,14 +121,14 @@ describe('.reviewSummaryLoader', () => {
 
 describe('ReviewSchema', () => {
   it('is expected to accept a stored review', () => {
-    expect(ReviewSchema.safeParse({ ...STORED.reviews[0], featured: 1 }).success).toBe(true)
+    expect(ReviewSchema.safeParse({ ...STORED.reviews[0], order: 0, featured: 1 }).success).toBe(true)
   })
 
   it('is expected to accept the lowest rating on a ten-point scale, restated out of five', () => {
-    expect(ReviewSchema.safeParse({ ...STORED.reviews[0], rating: 0.5 }).success).toBe(true)
+    expect(ReviewSchema.safeParse({ ...STORED.reviews[0], order: 0, rating: 0.5 }).success).toBe(true)
   })
 
   it('is expected to reject a rating above 5', () => {
-    expect(ReviewSchema.safeParse({ ...STORED.reviews[0], rating: 6 }).success).toBe(false)
+    expect(ReviewSchema.safeParse({ ...STORED.reviews[0], order: 0, rating: 6 }).success).toBe(false)
   })
 })

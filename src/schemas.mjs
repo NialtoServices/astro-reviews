@@ -26,6 +26,12 @@ export const ReviewSchema = z.object({
    */
   text: z.string(),
 
+  /**
+   * The review's 0-based place in `reviews.json`, which lists reviews newest first by exact time.
+   * Astro returns a collection's entries sorted by id, so this is what keeps same-day reviews in order.
+   */
+  order: z.number().int().nonnegative(),
+
   /** The review's 1-based position in `featured.json`; absent on a review that is not featured. */
   featured: z.number().int().positive().optional()
 })

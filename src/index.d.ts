@@ -8,6 +8,7 @@ export declare const ReviewSchema: z.ZodObject<{
   source: z.ZodString
   date: z.ZodOptional<z.ZodString>
   text: z.ZodString
+  order: z.ZodNumber
   featured: z.ZodOptional<z.ZodNumber>
 }>
 
@@ -33,10 +34,10 @@ export declare function reviewSummaryLoader(): Loader & { schema: typeof ReviewS
 
 /** The fields the selection helpers read, so they accept collection entries or plain objects. */
 export interface SelectableReview {
-  data: { date?: string; featured?: number }
+  data: { date?: string; featured?: number; order?: number }
 }
 
-/** Newest first; a review with no date sorts last. */
+/** Newest first; a review with no date sorts last, and same-day reviews keep their synced `order`. */
 export declare function sortNewestFirst<T extends SelectableReview>(reviews: T[]): T[]
 
 /**

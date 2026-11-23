@@ -25,8 +25,9 @@ fails the sync with a message naming what is missing; one that misses the third 
 
 1. **Use a Grid widget with a header.** Trustindex offers several widgets called "Grid"; choose one that shows
    a header above the reviews. The sync takes the site's headline rating and count from that header's "All
-   reviews" figures, totalled across every platform the widget collects, and from nowhere else. (In the
-   widget's markup this is layout 79.)
+   reviews" figures, totalled across every platform the widget collects, and from nowhere else. A widget that
+   collects a single platform has no "All reviews" figures, since Trustindex shows only that platform's, so
+   the sync reads that platform's figures instead. (In the widget's markup this is layout 79.)
 
 2. **Turn on the header's review count.** In the widget's settings pane, open the **Header** group and switch
    **Rating** on. Without it the header shows the rating but not the total count.

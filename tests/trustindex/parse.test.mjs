@@ -136,8 +136,23 @@ describe('.parseSummary', () => {
     })
   })
 
+  describe('with a single platform and no "All reviews" header', () => {
+    it("is expected to read the platform's own header", () => {
+      const html = WIDGET_HTML.replace(
+        /<div class="ti-header-content source-all\b[\s\S]*?(?=<div class="ti-header-content )/,
+        ''
+      )
+
+      expect(parseSummary(html)).toEqual({ rating: 4.8, count: 987 })
+    })
+  })
+
   describe.each([
-    ['with no "All reviews" header', (html) => html.replace('source-all', 'source-Yell'), /"All reviews" header/],
+    [
+      'with several platform headers and no "All reviews" header',
+      (html) => html.replace('source-all', 'source-Yell'),
+      /"All reviews" header/
+    ],
     [
       'with no review count in the header',
       (html) => html.replace(/<span class="ti-header-rating-reviews">1,234 reviews<\/span>/g, ''),

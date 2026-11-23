@@ -213,34 +213,41 @@ export function parseReviews(html) {
 }
 
 /**
- * The headline rating and count from the widget's "All reviews" header: the figures the live widget
- * shows, totalled across every platform. Each platform has a header of its own beside it, which is
- * skipped. They cover every rating, text or not, so they are larger than the number of review cards
- * the widget carries.
+ * The headline rating and count from the widget's header: the figures the live widget shows. A widget
+ * collecting several platforms has an "All reviews" header totalling them, beside one header per
+ * platform, and only the total is read. A widget collecting a single platform has that platform's
+ * header alone, because Trustindex adds no "All reviews" header for one source, and its figures are
+ * then the whole business's. Either way they cover every rating, text or not, so they are larger than
+ * the number of review cards the widget carries.
  *
- * Throws a `WidgetRequirementError` for anything it cannot read as a rating out of five and a whole
- * count, because figures that cannot be vouched for must never reach a page.
+ * Throws a `WidgetRequirementError` when several platform headers stand without a total, since any one
+ * of them would understate the business, and for anything it cannot read as a rating out of five and a
+ * whole count, because figures that cannot be vouched for must never reach a page.
  */
 export function parseSummary(html) {
-  const header = html.match(
-    /<div class="ti-header-content source-all\b[\s\S]*?(?=<div class="ti-header-content |$)/
-  )?.[0]
-  if (!header) throw new WidgetRequirementError('no "All reviews" header (ti-header-content source-all)')
+  const headers = html.match(/<div class="ti-header-content source-[\s\S]*?(?=<div class="ti-header-content |$)/g) ?? []
+  const allReviewsHeader = headers.find((header) => /^<div class="ti-header-content source-all\b/.test(header))
+  const header = allReviewsHeader ?? (headers.length === 1 ? headers[0] : undefined)
+  if (!header) {
+    throw new WidgetRequirementError(
+      'no "All reviews" header (ti-header-content source-all), and not exactly one platform header to read instead'
+    )
+  }
 
   const rawRating = header.match(/<span class="ti-header-rating">\s*([^<]+?)\s*<\/span>/)?.[1]
   const rawCount = header.match(/<span class="ti-header-rating-reviews">\s*([\d,]+)\s+reviews?\s*<\/span>/)?.[1]
   if (rawCount === undefined) {
-    throw new WidgetRequirementError('no review count in its "All reviews" header (ti-header-rating-reviews)')
+    throw new WidgetRequirementError('no review count in its header (ti-header-rating-reviews)')
   }
 
   const rating = Number(rawRating)
   if (rawRating === undefined || !/^\d+(\.\d+)?$/.test(rawRating) || rating < 0 || rating > RATING_SCALE) {
-    throw new WidgetRequirementError('no readable rating in its "All reviews" header (ti-header-rating)')
+    throw new WidgetRequirementError('no readable rating in its header (ti-header-rating)')
   }
 
   const count = Number(rawCount.replace(/,/g, ''))
   if (!Number.isInteger(count)) {
-    throw new WidgetRequirementError('no readable review count in its "All reviews" header (ti-header-rating-reviews)')
+    throw new WidgetRequirementError('no readable review count in its header (ti-header-rating-reviews)')
   }
 
   return { rating, count }
